@@ -18,7 +18,9 @@
   "main": "index.js",
   "name": "voice-autorunner",
   "scripts": {
-    "postinstall": "npm install --prefix assets && npm install --prefix game"
+    "postinstall": "npm install --prefix assets && npm install --prefix game",
+    "start": "docker-compose up -d --build",
+    "stop": "docker-compose down"
   },
   "standard": {
     "env": [

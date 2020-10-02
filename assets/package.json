@@ -9,7 +9,8 @@
   "main": "index.js",
   "name": "assets",
   "scripts": {
-    "start": "nodemon index"
+    "dev": "nodemon index",
+    "start": "node index"
   },
   "version": "1.0.0"
 }

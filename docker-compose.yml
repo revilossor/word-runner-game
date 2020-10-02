@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  assets:
+    build:
+      context: ./assets
+      dockerfile: Dockerfile
+    image: 'assets:dev'
+    ports:
+      - "8000:8000"
+
+  game:
+    build:
+      context: ./game
+      dockerfile: Dockerfile
+    image: 'game:dev'
+    ports:
+      - "8080:8080"
+    depends_on:
+      - assets

@@ -1,5 +1,8 @@
 {
   "author": "",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
   "description": "",
   "devDependencies": {
     "parcel-bundler": "^1.12.4",
@@ -12,8 +15,10 @@
   "scripts": {
     "build": "parcel build src/index.html",
     "clean": "rm -rf dist && rm -rf .cache",
+    "dev": "parcel src/index.html --port 8080",
     "prebuild": "npm run clean",
-    "start": "parcel src/index.html --port 8080"
+    "prestart": "npm run build",
+    "start": "node server"
   },
   "version": "1.0.0"
 }
