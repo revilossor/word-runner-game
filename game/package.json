@@ -1,12 +1,19 @@
 {
   "author": "",
   "description": "",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "phaser": "^3.24.1"
+  },
   "keywords": [],
   "license": "ISC",
   "main": "index.js",
   "name": "game",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "parcel build src/index.html",
+    "clean": "rm -rf dist && rm -rf .cache",
+    "prebuild": "npm run clean",
+    "start": "parcel src/index.html --port 8080"
   },
   "version": "1.0.0"
 }
