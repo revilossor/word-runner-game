@@ -1,0 +1,15 @@
+{
+  "author": "",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "assets",
+  "scripts": {
+    "start": "nodemon index"
+  },
+  "version": "1.0.0"
+}

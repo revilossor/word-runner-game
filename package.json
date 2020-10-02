@@ -5,6 +5,7 @@
     "husky": "^4.3.0",
     "jsonlint": "^1.6.3",
     "lint-staged": "^10.4.0",
+    "nodemon": "^2.0.4",
     "standard": "^14.3.4"
   },
   "husky": {
@@ -17,9 +18,7 @@
   "main": "index.js",
   "name": "voice-autorunner",
   "scripts": {
-    "start": "sh scripts/start.sh",
-    "stop": "sh scripts/stop.sh",
-    "test": "jest --passWithNoTests"
+    "postinstall": "npm install --prefix assets && npm install --prefix game"
   },
   "standard": {
     "env": [
