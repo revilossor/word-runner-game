@@ -1,0 +1,30 @@
+{
+  "author": "",
+  "description": "..",
+  "devDependencies": {
+    "husky": "^4.3.0",
+    "jsonlint": "^1.6.3",
+    "lint-staged": "^10.4.0",
+    "standard": "^14.3.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "voice-autorunner",
+  "scripts": {
+    "start": "sh scripts/start.sh",
+    "stop": "sh scripts/stop.sh",
+    "test": "jest --passWithNoTests"
+  },
+  "standard": {
+    "env": [
+      "browser"
+    ]
+  },
+  "version": "1.0.0"
+}
