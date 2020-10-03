@@ -42,8 +42,19 @@ export class MenuScene extends Phaser.Scene {
         })
       }
     }
-    this.tweens.add({ onLoop, loopDelay: 800, targets: [objects.say, objects.start], y: 180, duration: i * 3, ease: 'Sine.easeInOut', yoyo: 1, loop: -1 })
-    this.tweens.add({ onLoop, loopDelay: 1400, targets: [objects.press, objects.space], y: 180, duration: i * 3, ease: 'Sine.easeInOut', yoyo: 1, loop: -1 })
+
+    this.time.addEvent({
+      delay: 1000 + i * 4.5,
+      callback: () => {
+        this.tweens.add({ delay: this.tweens.stagger(i * 0.5), onLoop, loopDelay: i * 3, targets: [objects.press, objects.space], y: 180, duration: i * 3, ease: 'Sine.easeInOut', yoyo: 1, loop: -1 })
+      }
+    })
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.tweens.add({ delay: this.tweens.stagger(i * 0.5), onLoop, loopDelay: i * 3, targets: [objects.say, objects.start], y: 180, duration: i * 3, ease: 'Sine.easeInOut', yoyo: 1, loop: -1 })
+      }
+    })
 
     this.tweens.add({ targets: objects.word, scale: 0.90, duration: i, ease: 'Sine.easeInOut' })
     this.tweens.add({ targets: objects.word, scale: 1.10, duration: i * 2, ease: 'Sine.easeInOut', yoyo: 1, loop: -1 })
