@@ -20,6 +20,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('play_floor', 'images/play_floor.png')
     this.load.image('play_ground', 'images/play_ground.png')
     this.load.image('play_cat', 'images/play_cat.png')
+    this.load.image('play_obstacle', 'images/play_obstacle.png')
   }
 
   create () {
