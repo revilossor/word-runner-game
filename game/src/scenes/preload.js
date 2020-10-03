@@ -16,6 +16,8 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('menu_space', 'images/menu_space.png')
     this.load.image('menu_say', 'images/menu_say.png')
     this.load.image('menu_start', 'images/menu_start.png')
+
+    this.load.image('play_floor', 'images/play_floor.png')
   }
 
   create () {
