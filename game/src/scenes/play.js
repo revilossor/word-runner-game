@@ -3,7 +3,7 @@ import Phaser from 'phaser'
 const objects = {}
 
 const introDuration = 1000
-const acceleration = 6
+const velocity = 100
 
 export class PlayScene extends Phaser.Scene {
   constructor () {
@@ -16,9 +16,11 @@ export class PlayScene extends Phaser.Scene {
     objects.floor2 = this.add.sprite(696, 150, 'play_floor')
     objects.floor2.setAlpha(0)
 
-    // objects.cat = this.add.graphics()
-    // objects.cat.fillStyle(0xffff00, 1)
-    // objects.cat.fillRect(0, 0, 16, 16)
+    this.physics.add.existing(objects.floor1)
+    objects.floor1.body.setSize(348, 16)
+
+    this.physics.add.existing(objects.floor2)
+    objects.floor2.body.setSize(348, 16)
 
     this.tweens.add({
       targets: [objects.floor1, objects.floor2],
@@ -26,6 +28,19 @@ export class PlayScene extends Phaser.Scene {
       duration: 1000,
       ease: 'Sine.easeIn'
     })
+    this.tweens.add({
+      targets: [
+        objects.floor1.body.velocity,
+        objects.floor2.body.velocity
+      ],
+      x: -velocity,
+      duration: introDuration,
+      ease: 'Circ.easeOut'
+    })
+
+    // objects.cat = this.add.graphics()
+    // objects.cat.fillStyle(0xffff00, 1)
+    // objects.cat.fillRect(0, 0, 16, 16)
 
     this.time.addEvent({
       delay: introDuration,
@@ -38,9 +53,6 @@ export class PlayScene extends Phaser.Scene {
           yoyo: 1,
           loop: -1
         })
-
-        objects.floor1.body.acceleration.x = -acceleration
-        objects.floor2.body.acceleration.x = -acceleration
       }
     })
 
@@ -56,17 +68,20 @@ export class PlayScene extends Phaser.Scene {
     // objects.mshape.body.bounce.y = 1
     // objects.mshape.body.collideWorldBounds = true
 
-    this.physics.add.existing(objects.floor1)
-    objects.floor1.body.setSize(348, 16)
-
-    this.physics.add.existing(objects.floor2)
-    objects.floor2.body.setSize(348, 16)
-
     this.physics.world.setBounds(0, 0, this.game.config.width, this.game.config.height)
   }
 
   update (time, delta) {
     if (objects.floor1.x <= -696) { objects.floor1.x = objects.floor2.x + 696 }
     if (objects.floor2.x <= -696) { objects.floor2.x = objects.floor1.x + 696 }
+
+    if (objects.floor1.body.velocity.x < -velocity) {
+      objects.floor1.body.velocity.x = -velocity
+      objects.floor1.body.acceleration.x = 0
+    }
+    if (objects.floor2.body.velocity.x < -velocity) {
+      objects.floor2.body.velocity.x = -velocity
+      objects.floor2.body.acceleration.x = 0
+    }
   }
 }
