@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 
 const objects = {}
+let keys
 
 const introDuration = 1000
 const velocity = 100
@@ -10,21 +11,31 @@ export class PlayScene extends Phaser.Scene {
     super('PlayScene')
   }
 
+  catHitGround (cat, ground) {
+    console.log('1')
+  }
+
   create () {
-    objects.floor1 = this.add.sprite(0, 150, 'play_floor')
+    keys = this.input.keyboard.createCursorKeys()
+
+    this.physics.world.setBounds(0, 0, this.game.config.width, this.game.config.height)
+
+    objects.ground = this.physics.add.sprite(348 / 2, 176, 'play_ground')
+      .setImmovable(true)
+
+    objects.floor1 = this.physics.add.sprite(0, 150, 'play_floor')
+    objects.floor2 = this.physics.add.sprite(696, 150, 'play_floor')
+
+    objects.ground.setAlpha(0.1)
     objects.floor1.setAlpha(0)
-    objects.floor2 = this.add.sprite(696, 150, 'play_floor')
     objects.floor2.setAlpha(0)
 
-    this.physics.add.existing(objects.floor1)
-    objects.floor1.body.setSize(348, 16)
-
-    this.physics.add.existing(objects.floor2)
-    objects.floor2.body.setSize(348, 16)
+    objects.cat = this.physics.add.sprite(50, -30, 'play_cat')
+      .setGravityY(velocity * 4)
 
     this.tweens.add({
       targets: [objects.floor1, objects.floor2],
-      alpha: 1,
+      alpha: 0.8,
       duration: 1000,
       ease: 'Sine.easeIn'
     })
@@ -38,37 +49,29 @@ export class PlayScene extends Phaser.Scene {
       ease: 'Circ.easeOut'
     })
 
-    // objects.cat = this.add.graphics()
-    // objects.cat.fillStyle(0xffff00, 1)
-    // objects.cat.fillRect(0, 0, 16, 16)
-
     this.time.addEvent({
       delay: introDuration,
       callback: () => {
         this.tweens.add({
           targets: [objects.floor1, objects.floor2],
-          alpha: 0.7,
-          duration: introDuration,
-          ease: 'Sine.easeIn',
+          alpha: 0.55,
+          duration: introDuration * 3,
+          ease: 'Back',
+          yoyo: 1,
+          loop: -1
+        })
+        this.tweens.add({
+          targets: objects.ground,
+          alpha: 0.25,
+          duration: introDuration * 5,
+          ease: 'Back',
           yoyo: 1,
           loop: -1
         })
       }
     })
 
-    // objects.mshape = this.add.graphics()
-    // objects.mshape.fillStyle(0xffff00, 1)
-    // objects.mshape.fillRect(0, 0, 16, 16)
-    //
-    // this.physics.add.existing(objects.mshape)
-    // objects.mshape.body.setSize(16, 16)
-    // objects.mshape.body.velocity.x = 500
-    // objects.mshape.body.velocity.y = 0
-    // objects.mshape.body.bounce.x = 1
-    // objects.mshape.body.bounce.y = 1
-    // objects.mshape.body.collideWorldBounds = true
-
-    this.physics.world.setBounds(0, 0, this.game.config.width, this.game.config.height)
+    this.physics.add.collider(objects.cat, objects.ground)
   }
 
   update (time, delta) {
@@ -83,5 +86,11 @@ export class PlayScene extends Phaser.Scene {
       objects.floor2.body.velocity.x = -velocity
       objects.floor2.body.acceleration.x = 0
     }
+
+    keys.space.on('up', () => {
+      if (objects.cat.body.velocity.y === 0) {
+        objects.cat.setVelocityY(-(velocity * 2.5))
+      }
+    })
   }
 }
