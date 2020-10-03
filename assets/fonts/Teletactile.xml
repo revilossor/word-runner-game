@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <font>
-    <info face="RetroGaming" size="32"/>
+    <info face="Teletactile" size="32"/>
     <common lineHeight="35" base="8"/>
     <pages>
-        <page id="0" file="RetroGaming.png"/>
+        <page id="0" file="Teletactile.png"/>
     </pages>
     <chars>
         <char id="32" x="0" y="0" width="9" height="33" xoffset="0" yoffset="0" xadvance="9" page="0"/>

@@ -17,7 +17,8 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('menu_say', 'images/menu_say.png')
     this.load.image('menu_start', 'images/menu_start.png')
 
-    this.load.bitmapFont('font_retro', 'fonts/RetroGaming.png', 'fonts/RetroGaming.xml')
+    // this.load.bitmapFont('font_retro', 'fonts/RetroGaming.png', 'fonts/RetroGaming.xml')
+    this.load.bitmapFont('font_word', 'fonts/Teletactile.png', 'fonts/Teletactile.xml')
 
     this.load.image('play_floor', 'images/play_floor.png')
     this.load.image('play_ground', 'images/play_ground.png')

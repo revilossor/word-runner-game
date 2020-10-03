@@ -11,21 +11,57 @@ let triggered = false
 
 let utterances
 
+// TODO utterances in UI
+// TODO mic indicator in UI
+// TODO show score
+// TODO graphics - dino, cactus, clouds
+// TODO pass set of words from menu
+// TODO gets harder... faster?
+// TODO sound
+// TODO gameover
+// TODO hi scores
+
 const words = [
-  'left',
-  'right',
-  'up',
-  'down',
-  'monday',
-  'tuesday',
-  'wednesday'
+  'LEFT',
+  'RIGHT',
+  'UP',
+  'DOWN',
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY'
 ]
 let level = 0
+let word
 
 export class PlayScene extends Phaser.Scene {
   constructor () {
     super('PlayScene')
     utterances = new UtteranceListener(words)
+  }
+
+  changeWord () {
+    word = this.add.bitmapText(-200, 20, 'font_word', words[level])
+      .setAlpha(0)
+    this.tweens.add({
+      targets: word,
+      x: 320 - word.width,
+      duration: 750,
+      ease: 'Back'
+    })
+    this.tweens.add({
+      targets: word,
+      alpha: 0.5,
+      duration: 500
+    })
+    this.tweens.add({
+      targets: word,
+      alpha: 0.2,
+      delay: 750,
+      duration: 400,
+      ease: 'Cerc.easeInOut',
+      yoyo: 1,
+      repeat: -1
+    })
   }
 
   onUtterance (utterance) {
@@ -35,6 +71,12 @@ export class PlayScene extends Phaser.Scene {
       this.scene.start('MenuScene')
     } else if (utterance.match(words[level])) {
       triggered = true
+      this.tweens.add({
+        targets: word,
+        x: 350,
+        duration: 200,
+        ease: 'Sine'
+      })
     }
   }
 
@@ -43,25 +85,27 @@ export class PlayScene extends Phaser.Scene {
   }
 
   catHitObstacle (cat, obstacle) {
-    console.log('ded')
+    // console.log('ded')
   }
 
   catHitTrigger (cat, trigger) {
     if (triggered && objects.cat.body.velocity.y === 0) {
+      level = (level + 1) % words.length
       objects.cat.setVelocityY(-(velocity * 2.2))
     }
   }
 
   create () {
-    this.add.bitmapText(20, 20, 'font_retro', 'LEFT')
-
     keys = this.input.keyboard.createCursorKeys()
 
     this.physics.world.setBounds(0, 0, this.game.config.width, this.game.config.height)
 
+    objects.words = this.physics.add.group()
+    this.changeWord()
+
     objects.ground = this.physics.add.sprite(348 / 2, 176, 'play_ground')
       .setImmovable()
-      .setAlpha(0.1)
+      .setAlpha(0)
 
     objects.floor1 = this.physics.add.sprite(0, 150, 'play_floor')
       .setAlpha(0)
@@ -77,6 +121,7 @@ export class PlayScene extends Phaser.Scene {
 
     objects.trigger = this.physics.add.sprite(408, 146, 'play_jump_trigger')
       .setImmovable()
+      .setAlpha(0)
 
     this.tweens.add({
       targets: [objects.floor1, objects.floor2, objects.obstacle],
@@ -107,14 +152,6 @@ export class PlayScene extends Phaser.Scene {
           yoyo: 1,
           loop: -1
         })
-        this.tweens.add({
-          targets: objects.ground,
-          alpha: 0.25,
-          duration: introDuration * 5,
-          ease: 'Back',
-          yoyo: 1,
-          loop: -1
-        })
       }
     })
 
@@ -132,14 +169,25 @@ export class PlayScene extends Phaser.Scene {
       objects.obstacle.x += 400
       objects.trigger.x += 400
       if (triggered) {
-        level = (level + 1) % words.length
-        console.log(level, 'new word : ' + words[level])
+        this.time.addEvent({
+          delay: 100,
+          callback: () => {
+            word.destroy()
+            this.changeWord()
+          }
+        })
       }
       triggered = false
     }
 
     keys.space.on('down', () => { // TODO remove me
       triggered = true
+      this.tweens.add({
+        targets: word,
+        x: 350,
+        duration: 200,
+        ease: 'Sine'
+      })
     })
   }
 }

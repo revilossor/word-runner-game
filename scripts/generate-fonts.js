@@ -2,13 +2,21 @@ const generator = require('@rtpa/phaser-bitmapfont-generator');
 
 (async () => {
   // generate textures
+  // await generator.TextStyle2BitmapFont({
+  //   path: './assets/fonts',
+  //   fileName: 'RetroGaming',
+  //   textStyle: {
+  //     fontFamily: 'RetroGaming',
+  //     fontSize: '32px'
+  //   },
+  //   antialias: false
+  // })
   await generator.TextStyle2BitmapFont({
     path: './assets/fonts',
-    fileName: 'RetroGaming',
+    fileName: 'Teletactile',
     textStyle: {
-      fontFamily: 'RetroGaming',
-      fontSize: '32px',
-      fixedWidth: 20
+      fontFamily: 'Teletactile',
+      fontSize: '32px'
     },
     antialias: false
   })
