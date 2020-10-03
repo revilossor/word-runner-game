@@ -6,7 +6,7 @@ export class PlayScene extends Phaser.Scene {
   }
 
   create () {
-
+    this.cameras.main.setBackgroundColor('#ff00ff')
   }
 
   update (time, delta) {
