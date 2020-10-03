@@ -10,7 +10,12 @@ export class PreloadScene extends Phaser.Scene {
 
   preload () {
     this.load.setBaseURL(baseURL)
-    console.log('preload!')
+    this.load.image('menu_word', 'images/menu_word.png')
+    this.load.image('menu_runner', 'images/menu_runner.png')
+    this.load.image('menu_press', 'images/menu_press.png')
+    this.load.image('menu_space', 'images/menu_space.png')
+    this.load.image('menu_say', 'images/menu_say.png')
+    this.load.image('menu_start', 'images/menu_start.png')
   }
 
   create () {
