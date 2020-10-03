@@ -8,10 +8,12 @@ app.use((req, res, next) => {
 })
 
 app.use('/images', express.static('images'))
+app.use('/fonts', express.static('fonts'))
 
 const port = 8000
 
 app.listen(port, () => {
   console.log(`asset server listening on ${port}`)
   console.log('\t/images')
+  console.log('\t/fonts')
 })

@@ -1,5 +1,8 @@
 {
   "author": "",
+  "dependencies": {
+    "@rtpa/phaser-bitmapfont-generator": "^1.2.1"
+  },
   "description": "..",
   "devDependencies": {
     "husky": "^4.3.0",
@@ -18,6 +21,7 @@
   "main": "index.js",
   "name": "voice-autorunner",
   "scripts": {
+    "make:fonts": "node scripts/generate-fonts",
     "postinstall": "npm install --prefix assets && npm install --prefix game",
     "start": "docker-compose up -d --build",
     "stop": "docker-compose down"

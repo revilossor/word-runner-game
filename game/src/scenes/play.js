@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import UtteranceListener from '../lib/UtteranceListener'
 
 const objects = {}
 let keys
@@ -8,9 +9,33 @@ const velocity = 120
 
 let triggered = false
 
+let utterances
+
+const words = [
+  'left',
+  'right',
+  'up',
+  'down',
+  'monday',
+  'tuesday',
+  'wednesday'
+]
+let level = 0
+
 export class PlayScene extends Phaser.Scene {
   constructor () {
     super('PlayScene')
+    utterances = new UtteranceListener(words)
+  }
+
+  onUtterance (utterance) {
+    console.log(utterance)
+    if (utterance.match('menu')) {
+      utterances.stop()
+      this.scene.start('MenuScene')
+    } else if (utterance.match(words[level])) {
+      triggered = true
+    }
   }
 
   catHitGround (cat, ground) {
@@ -28,6 +53,8 @@ export class PlayScene extends Phaser.Scene {
   }
 
   create () {
+    this.add.bitmapText(20, 20, 'font_retro', 'LEFT')
+
     keys = this.input.keyboard.createCursorKeys()
 
     this.physics.world.setBounds(0, 0, this.game.config.width, this.game.config.height)
@@ -94,6 +121,8 @@ export class PlayScene extends Phaser.Scene {
     this.physics.add.collider(objects.cat, objects.ground, this.catHitGround)
     this.physics.add.overlap(objects.cat, objects.obstacle, this.catHitObstacle)
     this.physics.add.overlap(objects.cat, objects.trigger, this.catHitTrigger)
+
+    utterances.listen(this.onUtterance.bind(this))
   }
 
   update (time, delta) {
@@ -102,12 +131,14 @@ export class PlayScene extends Phaser.Scene {
     if (objects.obstacle.x <= -30) {
       objects.obstacle.x += 400
       objects.trigger.x += 400
+      if (triggered) {
+        level = (level + 1) % words.length
+        console.log(level, 'new word : ' + words[level])
+      }
       triggered = false
-      console.log('generate target word')
     }
 
-    keys.space.on('down', () => {
-      console.log('said target word')
+    keys.space.on('down', () => { // TODO remove me
       triggered = true
     })
   }
