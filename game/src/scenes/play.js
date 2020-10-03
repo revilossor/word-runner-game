@@ -4,7 +4,9 @@ const objects = {}
 let keys
 
 const introDuration = 1000
-const velocity = 100
+const velocity = 120
+
+let triggered = false
 
 export class PlayScene extends Phaser.Scene {
   constructor () {
@@ -17,6 +19,12 @@ export class PlayScene extends Phaser.Scene {
 
   catHitObstacle (cat, obstacle) {
     console.log('ded')
+  }
+
+  catHitTrigger (cat, trigger) {
+    if (triggered && objects.cat.body.velocity.y === 0) {
+      objects.cat.setVelocityY(-(velocity * 2.2))
+    }
   }
 
   create () {
@@ -40,6 +48,9 @@ export class PlayScene extends Phaser.Scene {
       .setImmovable()
       .setAlpha(0)
 
+    objects.trigger = this.physics.add.sprite(408, 146, 'play_jump_trigger')
+      .setImmovable()
+
     this.tweens.add({
       targets: [objects.floor1, objects.floor2, objects.obstacle],
       alpha: 0.8,
@@ -50,7 +61,8 @@ export class PlayScene extends Phaser.Scene {
       targets: [
         objects.floor1.body.velocity,
         objects.floor2.body.velocity,
-        objects.obstacle.body.velocity
+        objects.obstacle.body.velocity,
+        objects.trigger.body.velocity
       ],
       x: -velocity,
       duration: introDuration,
@@ -81,17 +93,22 @@ export class PlayScene extends Phaser.Scene {
 
     this.physics.add.collider(objects.cat, objects.ground, this.catHitGround)
     this.physics.add.overlap(objects.cat, objects.obstacle, this.catHitObstacle)
+    this.physics.add.overlap(objects.cat, objects.trigger, this.catHitTrigger)
   }
 
   update (time, delta) {
     if (objects.floor1.x <= -696) { objects.floor1.x = objects.floor2.x + 696 }
     if (objects.floor2.x <= -696) { objects.floor2.x = objects.floor1.x + 696 }
-    if (objects.obstacle.x <= -30) { objects.obstacle.x = 400 }
+    if (objects.obstacle.x <= -30) {
+      objects.obstacle.x += 400
+      objects.trigger.x += 400
+      triggered = false
+      console.log('generate target word')
+    }
 
-    keys.space.on('up', () => {
-      if (objects.cat.body.velocity.y === 0) {
-        objects.cat.setVelocityY(-(velocity * 2.5))
-      }
+    keys.space.on('down', () => {
+      console.log('said target word')
+      triggered = true
     })
   }
 }
