@@ -80,7 +80,7 @@ export class PlayScene extends Phaser.Scene {
     })
 
     this.physics.add.collider(objects.cat, objects.ground, this.catHitGround)
-    this.physics.add.collider(objects.cat, objects.obstacle, this.catHitObstacle)
+    this.physics.add.overlap(objects.cat, objects.obstacle, this.catHitObstacle)
   }
 
   update (time, delta) {
