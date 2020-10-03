@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import UtteranceListener from '../lib/UtteranceListener'
+import UtteranceListener from '../lib/utterance-listener'
 
 const objects = {}
 let keys
