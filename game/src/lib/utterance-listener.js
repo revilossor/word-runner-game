@@ -38,10 +38,10 @@ export default class UtteranceListener {
     recognition.start()
 
     recognition.onstart = () => {
-      console.log('start!')
+      // noop
     }
     recognition.onend = () => {
-      console.log('end!')
+      // noop
     }
     this.recognition = recognition
   }
