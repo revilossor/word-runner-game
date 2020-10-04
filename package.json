@@ -29,6 +29,9 @@
   "standard": {
     "env": [
       "browser"
+    ],
+    "ignore": [
+      "release"
     ]
   },
   "version": "1.0.0"
