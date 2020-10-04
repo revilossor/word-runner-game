@@ -18,8 +18,6 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create () {
-    this.keys = this.input.keyboard.createCursorKeys()
-
     objects.word = this.add.sprite(-100, 24, 'menu_word')
     objects.runner = this.add.sprite(-130, 60, 'menu_runner')
     objects.word.setAlpha(0.6)
@@ -98,11 +96,5 @@ export class MenuScene extends Phaser.Scene {
         }
       })
     }
-  }
-
-  update (time, delta) {
-    this.keys.space.on('up', () => {
-      this.start()
-    })
   }
 }

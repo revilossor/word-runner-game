@@ -12,7 +12,7 @@ module.exports = [
   'beautifully',
   'beliefs',
   'blown',
-  'bough',
+  // 'bough',
   'bows',
   'calendar',
   'canyon',
@@ -296,6 +296,5 @@ module.exports = [
   'whose',
   'wrestle',
   'wrinkleld',
-  'xylaphone',
-  'zoo'
+  'xyzzy'
 ]

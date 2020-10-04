@@ -2,7 +2,6 @@ import Phaser from 'phaser'
 import words from '../lib/words'
 
 const objects = {}
-let keys
 
 const introDuration = 1000
 const velocity = 120
@@ -11,23 +10,20 @@ const interval = 100
 
 let triggered = false
 
-// TODO mic indicator in UI
-// TODO show score
-// TODO graphics - dino, cactus, clouds - 4 frames of dino
-// TODO pass set of words from menu
-// TODO sound
-// TODO hi scores
+let targetWord
 
-let level = 0
+let score = -1
 
 export class PlayScene extends Phaser.Scene {
   constructor () {
     super('PlayScene')
-    level = 0
   }
 
   changeWord () {
-    objects.word = this.add.bitmapText(-200, 20, 'font_word', words[level])
+    score++
+    objects.score.text = `${score}`
+    targetWord = words[Math.round(Math.random() * words.length)].toLowerCase()
+    objects.word = this.add.bitmapText(-200, 20, 'font_word', targetWord)
       .setAlpha(0)
     this.tweens.add({
       targets: objects.word,
@@ -73,7 +69,7 @@ export class PlayScene extends Phaser.Scene {
   }
 
   gameOver () {
-    const d = 2000
+    const d = 1000
     window.utterances.stop()
     Object.values(objects).forEach(obj => {
       if (obj.body) {
@@ -97,13 +93,12 @@ export class PlayScene extends Phaser.Scene {
 
   onUtterance (utterance) {
     const said = utterance.toLowerCase()
-    const expected = words[level].toLowerCase()
 
     this.changeChatter(utterance)
     if (said.match('menu')) {
       window.utterances.stop()
       this.scene.start('MenuScene')
-    } else if (said.match(expected)) {
+    } else if (said.match(targetWord)) {
       triggered = true
       this.tweens.add({
         targets: objects.word,
@@ -114,23 +109,29 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 
+  catHitGround (cat, obstacle) {
+    if (objects.cat.anims.currentAnim.key !== 'run') {
+      objects.cat.play('run')
+    }
+  }
+
   catHitObstacle (cat, obstacle) {
+    objects.cat.play('die')
     this.gameOver()
   }
 
   catHitTrigger (cat, trigger) {
     if (triggered && objects.cat.body.velocity.y === 0) {
-      level = (level + 1) % words.length
       objects.cat.setVelocityY(-(velocity * 2.2))
+      objects.cat.play('jump')
     }
   }
 
   create () {
-    keys = this.input.keyboard.createCursorKeys()
-
     this.physics.world.setBounds(0, 0, this.game.config.width, this.game.config.height)
 
-    this.changeWord()
+    objects.score = this.add.bitmapText(320, 170, 'font_speak', `${score}`)
+      .setAlpha(0.5)
 
     objects.chatter = this.add.bitmapText(10, 170, 'font_speak', '')
       .setAlpha(0.5)
@@ -144,20 +145,47 @@ export class PlayScene extends Phaser.Scene {
     objects.floor2 = this.physics.add.sprite(696, 150, 'play_floor')
       .setAlpha(0)
 
-    objects.cat = this.physics.add.sprite(50, -30, 'play_cat')
+    objects.cat = this.physics.add.sprite(50, -30, 'play_dino')
       .setGravityY(velocity * 4)
 
-    objects.obstacle = this.physics.add.sprite(450, 127, 'play_obstacle')
+    objects.cat.body.setSize(30, 47, true)
+
+    this.anims.create({
+      key: 'run',
+      frames: this.anims.generateFrameNumbers('play_dino', { start: 1, end: 2 }),
+      frameRate: 8,
+      repeat: -1
+    })
+
+    this.anims.create({
+      key: 'jump',
+      frames: this.anims.generateFrameNumbers('play_dino', { start: 0, end: 0 })
+    })
+
+    this.anims.create({
+      key: 'die',
+      frames: this.anims.generateFrameNumbers('play_dino', { start: 3, end: 3 })
+    })
+
+    objects.cat.play('jump')
+
+    objects.obstacle = this.physics.add.sprite(450, 127, 'play_cactii')
       .setImmovable()
       .setAlpha(0)
 
-    objects.trigger = this.physics.add.sprite(408, 146, 'play_jump_trigger')
+    objects.trigger = this.physics.add.sprite(400, 146, 'play_jump_trigger')
       .setImmovable()
       .setAlpha(0)
 
     this.tweens.add({
       targets: [objects.floor1, objects.floor2, objects.obstacle],
       alpha: 0.8,
+      duration: 1000,
+      ease: 'Sine.easeIn'
+    })
+    this.tweens.add({
+      targets: [objects.obstacle],
+      alpha: 1,
       duration: 1000,
       ease: 'Sine.easeIn'
     })
@@ -187,9 +215,11 @@ export class PlayScene extends Phaser.Scene {
       }
     })
 
-    this.physics.add.collider(objects.cat, objects.ground)
+    this.physics.add.collider(objects.cat, objects.ground, this.catHitGround)
     this.physics.add.overlap(objects.cat, objects.obstacle, this.catHitObstacle.bind(this))
     this.physics.add.overlap(objects.cat, objects.trigger, this.catHitTrigger)
+
+    this.changeWord()
 
     window.utterances.listen(this.onUtterance.bind(this))
   }
@@ -199,6 +229,9 @@ export class PlayScene extends Phaser.Scene {
     if (objects.floor2.x <= -696) { objects.floor2.x = objects.floor1.x + 696 }
     if (objects.obstacle.x <= -30) {
       objects.obstacle.x += 348 + interval
+      objects.obstacle.setFrame(
+        Math.round(Math.random() * 2.99999999)
+      )
       objects.trigger.x += 348 + interval
       if (triggered) {
         this.time.addEvent({
@@ -211,9 +244,5 @@ export class PlayScene extends Phaser.Scene {
       }
       triggered = false
     }
-
-    keys.space.on('up', () => { // TODO remove me
-      this.onUtterance(words[level])
-    })
   }
 }

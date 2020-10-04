@@ -5,8 +5,9 @@ import { PlayScene } from './scenes/play'
 
 import UtteranceListener from './lib/utterance-listener'
 
+console.log('create')
 window.utterances = new UtteranceListener()
-
+console.log(window.utterances)
 const config = {
   type: AUTO,
   width: 348,
@@ -21,7 +22,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false
+      debug: true
     }
   },
   backgroundColor: 0x000000

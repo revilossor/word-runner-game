@@ -23,9 +23,17 @@ export class PreloadScene extends Phaser.Scene {
 
     this.load.image('play_floor', 'images/play_floor.png')
     this.load.image('play_ground', 'images/play_ground.png')
-    this.load.image('play_cat', 'images/play_cat.png')
-    this.load.image('play_obstacle', 'images/play_obstacle.png')
+    // this.load.image('play_cat', 'images/play_cat.png')
+    // this.load.image('play_obstacle', 'images/play_obstacle.png')
     this.load.image('play_jump_trigger', 'images/play_jump_trigger.png')
+    this.load.spritesheet('play_cactii', 'images/play_cactii_sheet.png', {
+      frameWidth: 25,
+      frameHeight: 50
+    })
+    this.load.spritesheet('play_dino', 'images/play_dino_sheet.png', {
+      frameWidth: 44,
+      frameHeight: 47
+    })
   }
 
   create () {
