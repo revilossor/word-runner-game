@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import UtteranceListener from '../lib/utterance-listener'
+import words from '../lib/words'
 
 const objects = {}
 let keys
@@ -7,54 +7,41 @@ let keys
 const introDuration = 1000
 const velocity = 120
 
+const interval = 100
+
 let triggered = false
 
-let utterances
-
-// TODO utterances in UI
 // TODO mic indicator in UI
 // TODO show score
-// TODO graphics - dino, cactus, clouds
+// TODO graphics - dino, cactus, clouds - 4 frames of dino
 // TODO pass set of words from menu
-// TODO gets harder... faster?
 // TODO sound
-// TODO gameover
 // TODO hi scores
 
-const words = [
-  'LEFT',
-  'RIGHT',
-  'UP',
-  'DOWN',
-  'MONDAY',
-  'TUESDAY',
-  'WEDNESDAY'
-]
 let level = 0
-let word
 
 export class PlayScene extends Phaser.Scene {
   constructor () {
     super('PlayScene')
-    utterances = new UtteranceListener(words)
+    level = 0
   }
 
   changeWord () {
-    word = this.add.bitmapText(-200, 20, 'font_word', words[level])
+    objects.word = this.add.bitmapText(-200, 20, 'font_word', words[level])
       .setAlpha(0)
     this.tweens.add({
-      targets: word,
-      x: 320 - word.width,
+      targets: objects.word,
+      x: 320 - objects.word.width,
       duration: 750,
       ease: 'Back'
     })
     this.tweens.add({
-      targets: word,
+      targets: objects.word,
       alpha: 0.5,
       duration: 500
     })
     this.tweens.add({
-      targets: word,
+      targets: objects.word,
       alpha: 0.2,
       delay: 750,
       duration: 400,
@@ -64,15 +51,62 @@ export class PlayScene extends Phaser.Scene {
     })
   }
 
+  changeChatter (to) {
+    if (objects.chatter.text === to) { return }
+    const outTime = 80
+    this.tweens.add({
+      targets: objects.chatter,
+      y: 200,
+      duration: outTime
+    })
+    this.time.addEvent({
+      delay: outTime,
+      callback: () => {
+        objects.chatter.text = to
+        this.tweens.add({
+          targets: objects.chatter,
+          y: 170,
+          duration: outTime * 1.2
+        })
+      }
+    })
+  }
+
+  gameOver () {
+    const d = 2000
+    window.utterances.stop()
+    Object.values(objects).forEach(obj => {
+      if (obj.body) {
+        obj.body.velocity.x = 0
+        obj.body.velocity.y = 0
+      }
+      this.tweens.add({
+        targets: obj,
+        alpha: 0,
+        duration: d,
+        ease: 'Power4'
+      })
+    })
+    this.time.addEvent({
+      delay: d,
+      callback: () => {
+        this.scene.start('MenuScene')
+      }
+    })
+  }
+
   onUtterance (utterance) {
-    console.log(utterance)
-    if (utterance.match('menu')) {
-      utterances.stop()
+    const said = utterance.toLowerCase()
+    const expected = words[level].toLowerCase()
+
+    this.changeChatter(utterance)
+    if (said.match('menu')) {
+      window.utterances.stop()
       this.scene.start('MenuScene')
-    } else if (utterance.match(words[level])) {
+    } else if (said.match(expected)) {
       triggered = true
       this.tweens.add({
-        targets: word,
+        targets: objects.word,
         x: 350,
         duration: 200,
         ease: 'Sine'
@@ -80,12 +114,8 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 
-  catHitGround (cat, ground) {
-    // console.log('1')
-  }
-
   catHitObstacle (cat, obstacle) {
-    // console.log('ded')
+    this.gameOver()
   }
 
   catHitTrigger (cat, trigger) {
@@ -100,8 +130,10 @@ export class PlayScene extends Phaser.Scene {
 
     this.physics.world.setBounds(0, 0, this.game.config.width, this.game.config.height)
 
-    objects.words = this.physics.add.group()
     this.changeWord()
+
+    objects.chatter = this.add.bitmapText(10, 170, 'font_speak', '')
+      .setAlpha(0.5)
 
     objects.ground = this.physics.add.sprite(348 / 2, 176, 'play_ground')
       .setImmovable()
@@ -155,24 +187,24 @@ export class PlayScene extends Phaser.Scene {
       }
     })
 
-    this.physics.add.collider(objects.cat, objects.ground, this.catHitGround)
-    this.physics.add.overlap(objects.cat, objects.obstacle, this.catHitObstacle)
+    this.physics.add.collider(objects.cat, objects.ground)
+    this.physics.add.overlap(objects.cat, objects.obstacle, this.catHitObstacle.bind(this))
     this.physics.add.overlap(objects.cat, objects.trigger, this.catHitTrigger)
 
-    utterances.listen(this.onUtterance.bind(this))
+    window.utterances.listen(this.onUtterance.bind(this))
   }
 
   update (time, delta) {
     if (objects.floor1.x <= -696) { objects.floor1.x = objects.floor2.x + 696 }
     if (objects.floor2.x <= -696) { objects.floor2.x = objects.floor1.x + 696 }
     if (objects.obstacle.x <= -30) {
-      objects.obstacle.x += 400
-      objects.trigger.x += 400
+      objects.obstacle.x += 348 + interval
+      objects.trigger.x += 348 + interval
       if (triggered) {
         this.time.addEvent({
           delay: 100,
           callback: () => {
-            word.destroy()
+            objects.word.destroy()
             this.changeWord()
           }
         })
@@ -180,14 +212,8 @@ export class PlayScene extends Phaser.Scene {
       triggered = false
     }
 
-    keys.space.on('down', () => { // TODO remove me
-      triggered = true
-      this.tweens.add({
-        targets: word,
-        x: 350,
-        duration: 200,
-        ease: 'Sine'
-      })
+    keys.space.on('up', () => { // TODO remove me
+      this.onUtterance(words[level])
     })
   }
 }

@@ -2,9 +2,19 @@ import Phaser from 'phaser'
 
 const objects = {}
 
+let changing = false
+
 export class MenuScene extends Phaser.Scene {
   constructor () {
     super('MenuScene')
+  }
+
+  onUtterance (utterance) {
+    const said = utterance.toLowerCase()
+
+    if (said.match('start')) {
+      this.start()
+    }
   }
 
   create () {
@@ -16,12 +26,6 @@ export class MenuScene extends Phaser.Scene {
 
     const i = 400
 
-    objects.press = this.add.sprite(270, 220, 'menu_press')
-    objects.space = this.add.sprite(320, 220, 'menu_space')
-
-    objects.press.setAlpha(0.5)
-    objects.space.setAlpha(0.7)
-
     objects.say = this.add.sprite(20, 220, 'menu_say')
     objects.start = this.add.sprite(65, 220, 'menu_start')
 
@@ -29,7 +33,7 @@ export class MenuScene extends Phaser.Scene {
     objects.start.setAlpha(0.7)
 
     const onLoop = ({ targets }) => {
-      const offset = 10 + Math.round(Math.random() * 100)
+      const offset = 50 + Math.round(Math.random() * 100)
       targets.forEach(target => {
         target.x += offset
       })
@@ -43,12 +47,6 @@ export class MenuScene extends Phaser.Scene {
       }
     }
 
-    this.time.addEvent({
-      delay: 1000 + i * 4.5,
-      callback: () => {
-        this.tweens.add({ delay: this.tweens.stagger(i * 0.5), onLoop, loopDelay: i * 3, targets: [objects.press, objects.space], y: 180, duration: i * 3, ease: 'Sine.easeInOut', yoyo: 1, loop: -1 })
-      }
-    })
     this.time.addEvent({
       delay: 1000,
       callback: () => {
@@ -66,10 +64,13 @@ export class MenuScene extends Phaser.Scene {
 
     this.tweens.add({ targets: objects.word, x: 74, duration: i * 2, ease: 'Circ.easeIn' })
     this.tweens.add({ targets: objects.runner, x: 95, duration: i * 2, ease: 'Circ.easeIn', delay: i })
+
+    window.utterances.listen(this.onUtterance.bind(this))
   }
 
-  update (time, delta) {
-    this.keys.space.on('up', () => {
+  start () {
+    if (changing === false) {
+      changing = true
       this.tweens.add({
         targets: objects.word,
         x: 750,
@@ -92,9 +93,16 @@ export class MenuScene extends Phaser.Scene {
       this.time.addEvent({
         delay: 500,
         callback: () => {
+          changing = false
           this.scene.start('PlayScene')
         }
       })
+    }
+  }
+
+  update (time, delta) {
+    this.keys.space.on('up', () => {
+      this.start()
     })
   }
 }

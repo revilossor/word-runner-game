@@ -3,6 +3,10 @@ import { PreloadScene } from './scenes/preload'
 import { MenuScene } from './scenes/menu'
 import { PlayScene } from './scenes/play'
 
+import UtteranceListener from './lib/utterance-listener'
+
+window.utterances = new UtteranceListener()
+
 const config = {
   type: AUTO,
   width: 348,
