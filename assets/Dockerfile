@@ -9,6 +9,9 @@ RUN npm i
 
 COPY index.js ./
 
+copy images ./images
+copy fonts ./fonts
+
 EXPOSE 8000
 
 CMD [ "npm", "start" ]

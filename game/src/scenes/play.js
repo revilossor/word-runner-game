@@ -12,7 +12,7 @@ let triggered = false
 
 let targetWord
 
-let score = -1
+let score = -1 // :)
 
 export class PlayScene extends Phaser.Scene {
   constructor () {
