@@ -1,6 +1,6 @@
 const config = {
   dev: {
-    baseURL: 'http://localhost:8000'
+    baseURL: 'https://revilossor.github.io/word-runner-game/release/'
   }
 }
 
